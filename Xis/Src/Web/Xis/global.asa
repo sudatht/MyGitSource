@@ -1,0 +1,178 @@
+<SCRIPT LANGUAGE="VBScript" RUNAT="Server">
+
+	'EventName               Description
+	'Session_OnStart      Runs the first time a user runs any page in your application
+	'Session_OnEnd       Runs when a user's session times out or quits your application
+	'Application_OnStart  Runs once when the first page of your application is run for the first time by any user
+	'Application_OnEnd   Runs once when the web server shuts down
+
+	Sub Session_OnStart
+		call lagConnection()
+		call lagBrukerProfil()
+		session.LCID = 1044
+	End Sub 
+
+	Function FinnBrukernavn()
+		'Username might contain domain information,
+		'we are only interested in the username
+		brukernavn = Request.ServerVariables("LOGON_USER")
+		'check: xtra/user
+		slashPos = InStr(brukernavn, "/")
+		'check: user@xtra.no
+		alfaPos = InStr(brukernavn, "@")
+		backslashPos = InStr(brukernavn, "\")
+		If slashPos > 0 Then
+			brukernavn = Mid(brukernavn, slashPos + 1)
+		elseIf backslashPos > 0 Then
+			brukernavn = Mid(brukernavn, backslashPos + 1)
+		elseif (alfaPos > 0) then
+			brukernavn = Mid(brukernavn, 1,  alfaPos - 1 )
+		End If					
+		finnBrukernavn = brukernavn
+	End Function
+
+	Sub LagBrukerProfil()
+		'Finner brukernavn slik at man kan slå opp i bruker db og finne rettigheter
+		brukernavn = finnBrukernavn()
+		'brukernavn = "ef"
+		' Set variables for Xtra application
+		Session("KlientID") = 1
+		Session("AnsMedID") = 1
+		'Finn bruker profil (rettigheter i db)
+		Set Conn = Server.CreateObject("ADODB.Connection")
+		Conn.Open Session("xtra_ConnectionString"),Session("Xtra_RuntimeUserName"), Session("xtra_RuntimePassword")
+		Set rsProfil  = Conn.Execute("SELECT [Profil], [ID], [medarbID], [SkattekortEndringer], [KundeGruppeEndringer] FROM [Bruker] WHERE [brukerID] = '" & brukernavn & "'" )
+		
+		if (NOT rsProfil.EOF) Then
+			Session("profil") =  rsProfil("Profil").Value
+			Session("brukerID") = rsProfil("ID").Value
+			Session("BrukerNavn") = brukernavn	
+			Session("medarbID") = rsProfil("medarbID").Value
+
+			if (IsNull(rsProfil("SkattekortEndringer").Value) Or rsProfil("SkattekortEndringer").Value = "") then
+				Session("EndreSkattekort") = false
+			else
+				Session("EndreSkattekort") = rsProfil("SkattekortEndringer").Value
+			end if
+
+			if (IsNull(rsProfil("KundeGruppeEndringer").Value) Or rsProfil("KundeGruppeEndringer").Value = "") then
+				Session("EndreKundeGruppe") = false
+			else
+				Session("EndreKundeGruppe") = rsProfil("KundeGruppeEndringer").Value
+			end if
+		end if		
+	End Sub 'lagBrukerProfil
+	
+	Sub lagConnection
+		Dim settingReader
+		dim provider
+		dim dbServer
+		dim username
+		dim password
+		dim dbName
+		dim options
+	
+		set settingReader = Server.CreateObject("XisUtils.Registry")
+		provider = settingReader.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "Provider" )
+		dbServer = settingReader.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "DBServer" )
+		username = settingReader.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "UserName" )
+		password = settingReader.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "Password" )
+		dbName	= settingReader.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "DBName" )
+		options	= settingReader.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "Options" )
+				
+		Session("Xtra_ConnectionString") = "Provider=" & provider & ";" & options & ";Data Source=" & dbServer & ";Initial Catalog=" & dbName & ";"
+		'Session("Xtra_DBConnectionString") = "Provider=" & provider & ";" & options & ";Data Source=" & dbServer & ";"
+		Session("Xtra_ConnectionTimeout") = 60
+		Session("Xtra_CommandTimeout") = 60
+		Session("Xtra_RuntimeUserName") = username
+		Session("Xtra_RuntimePassword") = password	
+		set settingReader = nothing
+	End Sub 
+
+	Sub Application_OnStart
+			' Registry Values for XTRA / Datashape
+			Dim regXTRA
+			Dim rvXtra_Provider
+			Dim rvXtra_DBServer
+			Dim rvXtra_Username
+			Dim rvXtra_Password
+			Dim rvXtra_DBName	
+			Dim rvXtra_Options	
+			Dim rvXtra_InitialCatalogUser
+		
+			' Retrieve Registry infos from
+			' [HKEY_LOCAL_MACHINE\SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault]
+			set regXTRA = Server.CreateObject("XisUtils.Registry")
+			rvXtra_Provider = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "Provider" )
+			rvXtra_DBServer = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "DBServer" )
+			rvXtra_Username = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "UserName" )
+			rvXtra_Password = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "Password" )
+			rvXtra_DBName	= regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "DBName" )
+			rvXtra_Options	= regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDefault", "Options" )
+			
+			'connection string used by kundeinteressedb.asp
+			Application("Xtra_intern_ConnectionString") = "Provider=" & rvXtra_Provider & ";" &_
+				"User ID=" & rvXtra_Username & ";" &_
+				"Password=" & rvXtra_Password & ";" &_
+				"Data Source=" & rvXtra_DBServer & ";" &_
+				"Initial Catalog=" & rvXtra_DBName & ";" &_
+				rvXtra_Options
+					
+			' Retrieve Registry infos from
+			' HKEY_LOCAL_MACHINE\Software\Electric Farm\Xtra\XtraWeb\ConnectionStrings\XtraDataShape
+			rvXtra_Provider = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDataShape", "Provider" )
+			rvXtra_DBServer = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDataShape", "DBServer" )
+			rvXtra_Username = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDataShape", "UserName" )
+			rvXtra_Password = regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDataShape", "Password" )
+			rvXtra_DBName	= regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDataShape", "DBName" )
+			rvXtra_Options	= regXTRA.GetKeyValue 	( "SOFTWARE\Electric Farm\Xtra\Xtraweb\ConnectionStrings\XtraDataShape", "Options" )
+
+			Application("ConXtraShape") = "Provider=" & rvXtra_Provider & ";" &_
+				"User ID=" & rvXtra_Username & ";" &_
+				"Password=" & rvXtra_Password & ";" &_
+				"Data Source=" & rvXtra_DBServer & ";" &_
+				"Initial Catalog=" & rvXtra_DBName  & ";" &_
+				rvXtra_Options
+	 
+ 			'Application("ConsultantFileRoot") = "\\eccoldev05vm1\VikarDok\"
+ 			Application("ConsultantFileRoot") = "\\eccoldev05vm1\VikarDok\"
+ 			Application("RubiconFileRoot") = "\\eccoldev05vm1\Rubicon"
+ 			Application("RubiconXtraFileRoot") = "\\eccoldev05vm1\Rubicon\"
+ 			Application("CVFileRoot") = server.MapPath("\xtra\CVUpload\CVdok\") & "\"
+ 			Application("ConsultantImages") =  server.MapPath("\xtra\vikarfoto\") & "\"
+ 			Application("URLConsultantImages") =  "/xtra/vikarfoto/"
+	  
+		'-- Connection string to IM Publish 
+			Application("IMPconnection") = "Provider=SQLOLEDB.1;Persist Security Info=False;User ID=eBusiness;Password=eBusiness;Data Source=eccoldev04vm02;Locale Identifier=1044;Connect Timeout=15;Auto Translate=True;Packet Size=4096;Initial Catalog=XtraEFP"
+			Application("XtraWebConnection") = Application("Xtra_intern_ConnectionString")
+		'--Vars to hold EF Publish group IDs
+			Application("CustomerGroupID") = "7"
+			Application("SubstituteGroupID") = "8"
+		'--Vars to hold mail server info
+			Application("XtraMailServer") = "172.20.1.11"
+			Application("XtraSenderName") = "Xtra Admin"
+			Application("XtraSenderMail") = "webmaster@xtra.no"
+			Application("MailSubjectResetPWD") = "Vedrørende Xtra Web."
+			Application("MailBodyresetPWD") = "Du har fått nytt passord til Xtra's web-sider. Brukernavnet ditt er uendret." & vbCrLf & vbCrLf & "Du vil bli bedt om å bytte passord ved førstegangs pålogging. " & vbCrLf & "Ditt nye passord er "
+			Application("MailSubjectNewUID") = "FYI:Vedrørende din XtraWeb bruker."
+			Application("MailBodyNewUID") = "Vennligst noter deg brukernavnet og passordet ditt på et sikkert sted. " & vbCrLf & "Ditt nye brukernavn er "
+			Application("MailSubjectNewUser") = "Velkommen som Xtra personell bruker!"
+			Application("MailBodyNewUser") = "Vennligst noter deg brukernavnet og passordet ditt på et sikkert sted." & vbCrLf & "Du vil kunne bytte passord ved førstegangs pålogging. Dersom du endrer passordet ditt, vær obs på at det må bestå av minst 6 tegn, hvorav 3 av dem må være tall."
+			Application("MailBodySign") = "Mvh" & vbCrLf & "Webmaster" & vbCrLf & "Xtra personell" & vbCrLf & "Tlf 23 10 00 60"
+			Application("TlfReception") = "Tlf 23 10 00 60"
+			Application("XtraImgAddress") = "http://www.xtra.no/images/"
+		'--IP-adressen til Xtra's IMP
+			'--Application("HTTPadress") = "172.20.1.135" 'Ip adresse til xtraweb
+			Application("HTTPadress") = "Xis" 'Ip adresse til xtraweb		
+			
+			'CMU@EC - The following configuration settings are used by DNN user integration
+			Application("DNNUserServiceURL") = "http://dnn/userservice/userservice.asmx"
+			Application("Application") = 1
+			
+			'Customer approval of timesheets default value
+  			Application("CustomerApprovalDefaultValue") = 0
+
+				
+	End Sub
+	
+</SCRIPT>

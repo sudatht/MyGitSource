@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<meta name="Title" content="Sox|is" />
+		<meta name="Description" content="Sox|is" />
+		<meta name="Developer" content="Christian Willoch, Fred Myklebust, Frank Rosendahl" />
+		<title>Sox|is</title>
+		<script language="javascript" src="fadescript.js" id="fadescript" ></script>
+		<script language="javascript" src="cookiescript.js" id="cookiescript" ></script>
+		<script language="javascript">
+			//Holds all images used for memory 
+			var cardImages = new Array();		// Holds all available images for cards
+			var selectedCards = new Array();	// Holds the cards that have been clicked
+			var cardBackImage;					// Holds the image of the "backside" of the cards
+			var cardLocations = new Array;		// Holds the position of all the cards in the game
+			var cardsPerRow = 4;				// Holds number of cards per row on table
+			var numberOfUniqueCards = 0;
+			var currentCardPair = 0;			// Holds the current solved card pair
+			var startTime = null;				// Holds starttime from first click on a card
+			var imgs = new Array('pic1.jpg', 'pic2.jpg', 'pic3.jpg', 'pic4.jpg', 'pic5.jpg'); //holds filenames of all pictures and their description
+			var scoreMessages = new Array('60.00|Jeg håper du ble avbrudd av en telefon eller at sjefen passerte,\n for dette resultatet er elendig!|Mindre tid = bedre, okay?|Det var hva man kaller en mariginal forbedring av din forrige highscore..\nPrøv hardere!','45.00|Teflon hjerne.\nJa du, ja!| Hallo!\nSkjerpings!Vi leker ikke spill her okay?!|Er nok en ny rekord for deg, men men en 3 åring greier det raskere..','25.00|*sukk* Mora di er raskere enn dette!|Dette går jo feil vei..\nKonsentrer deg!|Bra, men ikke godt nok!','18.00|Du har talent for dette.\nGodt visuelt minne?|Ganske raskt, men du har gjort det raskere før..|B R A V O!, gratulerer med ny highscore, det var raskt!\nPrøv en gang til så kanskje..','13.00|Enten har du klisterhjerne, eller så har du utrolig flaks!|Turbo-kjapt, men ikke raskt nok, desverre..|Ny fabelaktig highscore, men desverre ikke godt nok..\nPrøv igjen!','0.0|Suverent! Også på første forsøk!\nTrykk på enter for en overraskelse!|Wow.Veldig bra, men den gamle highscoren din står!|Fabelaktig, gratulerer med ny highscore!\nTrykk ok for en liten overraskelse!');
+
+			//scroller vars
+			var ti, cnt, fv = 0;
+			
+			function InitializeNewGame()
+			{
+				//Reset click state
+				selectedCards[0] = null;
+				selectedCards[1] = null;
+				//Place cards on playfield
+				SetupCardLocations();
+				//Number of different cards in play
+				numberOfUniqueCards = cardImages.length;
+				currentCardPair = 0;
+				//No card has been selected yet, set when card first selected
+				startTime = null;
+				SetupCardLocations(); //"Shuffle" cards
+				RenderCardTable(); //place cards on table
+			}
+			
+			function SetupCardLocations()
+			{
+				var cardLocation = 0; //Placement of current card
+				var totalNumberOfCards = cardImages.length * 2; //Total number of cards on playfield
+				var cardPoolSize = totalNumberOfCards; //Number of remaining cards in pool
+				
+				//clear out all previous placements of cards..
+				for (i = 0; i < totalNumberOfCards; i++)
+				{
+					cardLocations[i] = "";
+				}
+				
+				//Set up locations for all cards
+				for (i = 0; i < cardImages.length; i++)
+				{
+					//Setup up random locations for current "card"
+					cardLocation = Math.floor(Math.random() * (cardPoolSize));
+					var locationIndex = -1;
+					var j = 0;
+					while(j < totalNumberOfCards)
+					{
+						if(cardLocations[j] == "") //"Empty" card location?
+						{
+							locationIndex++; 
+							if(cardLocation == locationIndex) //Correct place in card pool?
+							{
+								var card = cardImages[i];
+								cardLocations[j] = card.src;
+								break; // this card has been found, exit loop
+							}
+						}
+						j++;
+					}
+					//Setup second location
+					cardPoolSize--; //Pool is one card smaller..
+					cardLocation = Math.floor(Math.random() * (cardPoolSize));
+					var locationIndex = -1;
+					var j = 0;
+					while(j < totalNumberOfCards)
+					{
+						if(cardLocations[j] == "") //"Empty" card location?
+						{
+							locationIndex++;
+							if(cardLocation == locationIndex) //Correct place in card pool?
+							{
+								var card = cardImages[i];
+								cardLocations[j] = card.src;
+								break; // this card has been found, exit loop
+							}
+						}
+						j++;
+					}
+					cardPoolSize--;	//Pool is one card smaller..		
+				}
+			}
+			
+			//Renders all the cards on the "table"
+			function RenderCardTable()
+			{
+				var cardTable = document.getElementById('cardTable');
+				var slot = 0;
+				var html = "<div>";
+				for(i = 0; i < cardLocations.length; i++)
+				{
+					html += "<span><img height='140' width='140' alt='Klikk for å snu kortet' class='activeCard' src='back.jpg' onclick='SelectCard(this);' id='" + i + "'></span>";
+					slot++; //card placed in slot
+					if(slot == cardsPerRow && (i + 1 < cardLocations.length)) //last card on row and more rows..
+					{
+						html += "</div><div>";
+						slot = 0;
+					}
+					else if(slot == cardsPerRow || (i + 1 == cardLocations.length)) //last card on row or last card
+					{
+						html += "</div>";
+					}
+				}
+				cardTable.innerHTML = html;
+			}
+			
+			function InitializePictures()
+			{
+				//Preload images used for cards
+				var img; 
+				for (i = 0; i < imgs.length; i++)
+				{
+					img = new Image(); 
+					img.src = imgs[i];
+					cardImages[i] = img;
+				}
+				//Load image for back of card
+				cardBackImage = new Image(); 
+				cardBackImage.src = "back.jpg";
+				cardBackImage.setAttribute('alt', 'Klikk for å snu kortet' );
+			}
+			
+			//A card has been flipped
+			function SelectCard(selectedCard)
+			{
+				if(startTime == null) //first time a card has been clicked..
+				{
+					startTime = new Date();
+				}
+				
+				if(selectedCard == selectedCards[0] || selectedCard == selectedCards[1]) //Ignore double clicks
+				{
+					return;
+				}
+				var pic_id = selectedCard.id; //id of card that has been clicked on
+				if(selectedCards[0] == null) //Clicked on first card..
+				{
+					selectedCards[0] = selectedCard; //store the first card
+				}
+				else
+				{
+					if(selectedCards[1] == null) //clicked on second card on a row..
+					{
+						selectedCards[1] = selectedCard; //store the second card	
+					}
+					else
+					{
+						selectedCards[0].src = cardBackImage.src;
+						selectedCards[0].setAttribute('alt', cardBackImage.getAttribute('alt') ); 
+						selectedCards[1].src = cardBackImage.src;
+						selectedCards[1].setAttribute('alt', cardBackImage.getAttribute('alt') ); 
+						selectedCards[1] = null;
+						selectedCards[0] = null;
+						SelectCard(selectedCard);
+						return;
+					}
+				}
+				selectedCard.src = cardLocations[pic_id];
+				selectedCard.setAttribute('alt', '' );
+				if (selectedCards[1] != null)
+				{
+					var imageOne = selectedCards[0];
+					var imageTwo = selectedCards[1];
+					
+					if(imageOne.src == imageTwo.src)
+					{
+						imageOne.onclick = '';
+						imageOne.className = 'inactiveCard';
+						imageTwo.onclick = '';
+						imageTwo.className = 'inactiveCard';
+						selectedCards[0] = null;
+						selectedCards[1] = null;		
+						currentCardPair++;
+						if(currentCardPair == numberOfUniqueCards)
+						{
+							var endDate = new Date();
+							var result = ( endDate.getTime() - startTime.getTime() );
+							DisplayScoreMessage(result / 1000);
+						}
+					}
+				}
+			}
+			
+			//Displays a taunting message based on how fast the player finished the game
+			function DisplayScoreMessage(seconds)
+			{
+				var i = 0;
+				var highscore = getCookie("highscore");
+				highscore = (highscore == null) ? -1 : highscore;
+				for(i = 0; i < scoreMessages.length; i++)
+				{
+					var values = scoreMessages[i].split('|');
+					if(parseFloat(seconds) >= parseFloat(values[0]))
+					{
+						if(highscore == -1) //No previous highscore
+						{
+							setCookie("highscore", seconds, null, null, null, false);
+							alert(values[1] + '' +'\nAntall sekunder brukt: ' + seconds);	
+						}
+						else if(parseFloat(seconds) > parseFloat(highscore)) //worse than previous highscore
+						{
+							alert(values[2] + '' +'\nAntall sekunder brukt: ' + seconds);							
+						}						
+						else if(parseFloat(seconds) <= parseFloat(highscore)) //New highscore
+						{
+							setCookie("highscore", seconds, null, null, null, false);
+							alert(values[3] + '' +'\nAntall sekunder brukt: ' + seconds);							
+						}
+						break;
+					}
+				}
+				if((scoreMessages.length - 1) == i)
+				{
+					ShowScroller();
+				}
+			}
+			
+			function ShowScroller()
+			{
+				fadein();
+				hideGameElements();
+				startScroller();
+			}			
+
+
+			function Start()
+			{						
+				fadeout();
+				InitializePictures();
+				InitializeNewGame();
+			}
+			
+
+			//Hide all game elements
+			function hideGameElements()
+			{
+				var rulesElement = document.getElementById('rules');
+				rules.className = 'hidden';
+				var cardTableElement = document.getElementById('cardTable');
+				cardTableElement.className = 'hidden';
+				var buttonNewGame = document.getElementById('btnNewGame');
+				buttonNewGame.className = 'hidden';			
+			}
+			
+			/* TODO:
+			New functions:
+			 - Nice design! 
+			*/
+		
+			function handler()
+			{
+				var i;
+				var sz;
+				var numberOfElements = 58;
+				
+				cnt++;
+				if (fv >= numberOfElements) clearInterval(ti);
+				
+				var mx = fv+8;
+				if (mx >= numberOfElements) mx = numberOfElements;
+
+				for (i = fv; i < mx; i++)
+				{
+					sz = -cnt*2 + i * 10;
+					if (sz <= 0)
+					{
+						fv = i + 1;
+						document.all("p" + i).className = "line";
+					}
+					else if (sz <= 80)
+					{
+						document.all("p" + i).style.fontSize = sz + "pt";
+						document.all("p" + i).className = "vline";
+					}
+				}
+			}
+			
+			function startScroller()
+			{
+				var scrollerElement = document.getElementById('scroller'); //Setup the scroller
+				scrollerElement.className = 'scroller';
+				var startElement = document.getElementById('p4');
+				startElement.className = "vline";
+				cnt = 0;
+				ti = setInterval("handler()", 150); //Start the scrolling!
+			}		
+		</script>
+		<style type="text/css">
+			body {padding:1em 2em; margin:0;}
+			.rulesText {border:1px solid #669999; width:573px; font:normal normal normal 11pt/normal Georgia, serif; margin:0 0 10px 0;}
+			              
+			.activeCard {cursor:hand; border:1px solid #336666; margin:1px;}
+			.inactiveCard {border:1px dotted #fff; margin:1px;}
+			
+			.hidden {display:none;}
+			.scroller {position:absolute; left:-100%; top:20%; width:300%; height:80%; overflow: hidden; text-align:center;}
+			.vline {font-size:0; margin:0; color:white;}
+			.line {font-size:0; margin:0; display:none; color:white;}
+			em {font-weight:bolder; font-style:normal;}
+			
+			#scroller p {color:#99cccc; font-family:georgia, serif; margin:0 0 6px 0;}
+			#scroller em {text-transform:uppercase; font-style:normal; font-weight:normal;}
+		</style>		
+	</head>
+	<body>
+		<div class="rulesText" id="rules">
+			<div style="padding:10px;">
+			    <p style="font-size:14pt;">Gratulerer, du har funnet spillet Xtra-memory (xem&trade;)!</p>
+			    <p><em>Regler:</em> Under finner du en rekke par av billedkort som er stokket i tilfeldig rekkefølge og plassert under med baksiden opp.</p>
+			    <p>
+			       	Prøv å finne alle parene så fort som mulig. For å snu et kort, klikk på det.<br>
+				    Du kan kun ha snudd 2 kort om gangen.
+			    </p>
+			    <p>Klikk på et kort for å starte spillet, trykk på "nytt spill"-knappen for å starte på nytt.</p>
+		    </div>
+		</div>
+
+		<div id='cardTable'></div>
+		<input style="margin:10px 0 10px 0;" id="btnNewGame" type="button" onclick="javascript:InitializeNewGame();" value="Nytt spill">
+
+		<div id="scroller" class="hidden">
+			<p id="p0" class="line"> </p>
+			<p id="p1" class="line"> </p>
+			<p id="p2" class="line"> </p>
+			<p id="p3" class="line"> </p>
+			<p id="p4" class="line"> </p>
+			<p id="p5" class="line"> </p>
+			<p id="p6" class="line"> </p>
+			<p id="p7" class="line"><em>Ledelsegruppe:</em></p>
+			<p id="p8" class="line">Kristian Fæste (Xtra)</p>
+			<p id="p9" class="line">-</p>
+			<p id="p10" class="line"><em>Prosjektledelse:</em></p>
+			<p id="p11" class="line">Christian Willoch (Xtra)</p>
+			<p id="p12" class="line">Stein Andresen (Cosmos / Electric Farm)</p>
+			<p id="p13" class="line">Kjetil Borg (Cosmos / Electric Farm)</p>
+			<p id="p14" class="line">Line Willumsem Solem (Electric Farm)</p>
+			<p id="p15" class="line">Henrik Otterstad Nilsen (Electric Farm)</p>
+			<p id="p16" class="line">Tone Reinholdtsen (Electric Farm / Ergo)</p>
+			<p id="p17" class="line">-</p>
+			<p id="p18" class="line"><em>Systemarkitektur:</em></p>
+			<p id="p19" class="line">Arne Leithe (Cosmos)</p>
+			<p id="p20" class="line">Line Willumsem Solem (Electric Farm)</p>
+			<p id="p21" class="line">Fred Myklebust (Electric Farm / Ergo)</p>
+			<p id="p22" class="line">-</p>
+			<p id="p23" class="line"><em>Database:</em></p>
+			<p id="p24" class="line">Arne Leithe (Cosmos)</p>
+			<p id="p25" class="line">Line Willumsem Solem (Electric Farm)</p>
+			<p id="p26" class="line">Fred Myklebust (Electric Farm / Ergo)</p>
+			<p id="p27" class="line">-</p>
+			<p id="p28" class="line"><em>Design:</em></p>
+			<p id="p29" class="line">Stakkars Arkitektdamen (Cosmos)</p>
+			<p id="p30" class="line">Frank Rosendahl (Electric Farm / Ergo)</p>
+			<p id="p31" class="line">-</p>
+			<p id="p32" class="line"><em>Programmering:</em></p>
+			<p id="p33" class="line">Arne Leithe (Cosmos)</p>
+			<p id="p34" class="line">Star Rashid (Cosmos / Electric Farm)</p>
+			<p id="p35" class="line">Jøran Slettedal (Electric Farm)</p>
+			<p id="p36" class="line">Line Willumsem Solem (Electric Farm)</p>
+			<p id="p37" class="line">Fred Myklebust (Electric Farm / Ergo)</p>
+			<p id="p38" class="line">Monica Johansen (Electric Farm)</p>
+			<p id="p39" class="line">Espen Lunde (Electric Farm)</p>
+			<p id="p40" class="line">Frank Rosendahl (Electric Farm / Ergo)</p>
+			<p id="p41" class="line">Per 'phil' Hildebrann (Ergo)</p>
+			<p id="p42" class="line">Michal Karpinski (Ergo)</p>
+			<p id="p43" class="line">-</p>
+			<p id="p44" class="line"><em>Testing:</em></p>
+			<p id="p45" class="line">Christian Willoch (Xtra)</p>
+			<p id="p46" class="line">Nils Tore Breiby (Xtra)</p>
+			<p id="p47" class="line">Ann-Kristin Simensen (Xtra)</p>
+			<p id="p48" class="line">Grete Brandvold (Xtra)</p>
+			<p id="p49" class="line">Bente Hansen (Xtra)</p>
+			<p id="p50" class="line">Hallvard Romstad (Xtra)</p>
+			<p id="p51" class="line">Kjell Rabe (Xtra)</p>
+			<p id="p52" class="line">Anne-Marit Uglum (Xtra)</p>
+			<p id="p53" class="line">Og alle brukerne.. (Xtra)</p>
+			<p id="p54" class="line">-</p>
+			<p id="p55" class="line">S O   L O N G   A N D   T H A N K S </p>
+			<p id="p56" class="line">F O R   A L L   T H E   F I S H </p>
+			<p id="p57" class="line"><a href="http://www.google.no/search?hl=no&q=define%3Aeaster+egg&meta=" target="_top">hva er dette?</a></p>
+		</div>
+		<div>
+			<script language="javascript">Start()</script>
+		</div>
+	</body>
+</html>

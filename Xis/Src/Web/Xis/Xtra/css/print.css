@@ -1,0 +1,30 @@
+BODY {font-size: 70%; margin: 0; padding:0;}
+BODY, TABLE {font-family: tahoma, sans-serif;}
+H1,H2,H3,H4,H5,H6 {margin:0 0 0 0; color:#000; background:transparent;}
+H1 {font-size:240%; font-weight:normal;}
+H2 {font-size:150%; font-weight:normal;}
+H3 {font-size:110%;}
+H4 {font-size:110%;}
+H5 {font-size:110%;}
+H6 {font-size:110%;}
+P {font-size:100%; margin:0 0 1em 0;}
+TABLE {font-size:100%; empty-cells:show;}
+.topmenuBodyImg {display:none;}
+.topMenu {display:none;}
+.navMenu {display:none;}
+.newWindow {padding:0 0 0 0;}
+.pageContainer {}
+.content {background:#ffffff; color:#000; margin-bottom:10px; border:none;}
+.contentHead1 {border:none;background:none;}
+.contentHead {background:none; border:none; margin-top:10px;}
+.contentHead H1, .contentHead H2 {background:none; padding:0;}
+.contentHeadOpen, .contentHeadClosed {background:none;}
+.contentMenu {display:none;}
+.contentHead1 img, .contentHead img, .contentHead H1 img, .contentHead H2 img, .contentHeadOpen img, .contentHeadClosed img, .contentMenu img {display:none;}
+.menu {display:none;}
+.listing {margin: 10px 0 10px 0;}
+.must {background:#ffffcc;}
+.readOnly {background:#e6e6e6;}
+
+
+

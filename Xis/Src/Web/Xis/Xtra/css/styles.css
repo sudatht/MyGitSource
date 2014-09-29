@@ -1,0 +1,87 @@
+.des_main_title_box {
+	background-color: #D6DFE7;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #001052;
+	border-right-color: #001052;
+	border-bottom-color: #001052;
+	border-left-color: #001052;
+}
+.txt_main_tiltle {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+	color: #000000;
+	padding-top: 3px;
+	padding-left: 5px;
+}
+a.button_top_style {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	height: 17px;
+	margin-right: 5px;
+	padding-right: 5px;
+	padding-left: 5px;
+	background-color: #FFFFFF;
+	border: 1px solid #001052;
+	vertical-align: middle;
+	text-decoration: none;
+}
+a.button_top_style:hover {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+	height: 17px;
+	margin-right: 5px;
+	padding-right: 5px;
+	padding-left: 5px;
+	background-color: #FFFFFF;
+	vertical-align: middle;
+	text-decoration: none;
+	border-top-width: 1px;
+	border-right-width: 2px;
+	border-bottom-width: 2px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #001052;
+	border-right-color: #001052;
+	border-bottom-color: #001052;
+	border-left-color: #001052;
+}
+
+.des_content_box {
+	background-color: #EFF7F7;
+	padding: 5px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-right-color: #001052;
+	border-bottom-color: #001052;
+	border-left-color: #001052;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #000000;
+}
+.txt_bold {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+}
+.form_list_menu {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	height: 17px;
+	width: 150px;
+	border: 1px solid #424142;
+}

@@ -1,0 +1,16 @@
+Integration2.dll
+-----------------
+Component used by Xis to access superoffice data.
+Use "regsvr32.exe" to register the component on the webserver.
+
+Used to retrieve SuperOffice:
+-----------------------------
+- Contact 
+- Get address for a given contact
+- Persons (contactpersons) for contact
+- All contactpersons for a given Contact as HTML dropdownbox
+- Retrieve the contact hierarchy (contacts and sub contact)
+
+This version uses ADODB to retrieve data from SuperOffice, the previous version ("integration.dll") 
+used SuperOffice SODBIF layer to access the superoffice data. 
+Due to instability and performance issues, ADODB is now used instead.

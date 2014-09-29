@@ -1,0 +1,219 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN"
+    "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+	<title>Rutinebeskrivelse</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="stylesheet" href="/xtra/css/main.css" type="text/css" title="xtra intranett stylesheet">
+<link rel="stylesheet" href="/xtra/css/print.css" type="text/css" title="xtra intranett stylesheet" media="print">
+</head>
+<body>
+	<div class="pageContainer" id="pageContainer">
+		<div class="contentHead1">
+			<h1>Rutiner</h1>
+		</div>
+		<div class="content">
+		<a name=meny>
+		<ol>
+			<li><a href=#loenn1>Timelistens gang </a></li>
+			<li><a href=#overforloenn>Overføring av variabel lønn til Huldt &amp; Lillevik</a></li>
+			<li><a href=#overforfakt>Overføring av faktura til Rubicon</a></li>
+			<li><a href=#admin>Administrasjon</a></li>
+			<ul>
+				<li><a href=#admin1>Endring av tildato</a></li>
+				<li><a href=#admin2>Splitting av uke</a></li>
+				<li><a href=#admin3>Splitting av faktura</a></li>
+				<li><a href=#admin4>Legge til lønnslinjer i variabel lønn</a></li>
+				<li><a href=#admin5>Legge til fakturalinjer i fakturaen</a></li>
+				<li><a href=#admin6>Søk i gamle timelister</a></li>
+				<li><a href=#admin7>Fjerne gamle timelister fra timelistebildet</a></li>
+				<li><a href=#admin8>Etterlønning og etterfaturering</a></li>
+				<li><a href=#admin9>Omsetningsrapport</a></li>
+			</ul>
+			<li><a href=#loenn2>Overføring av personopplysninger til Huldt &amp; Lillevik</a></li>
+		</ol>
+		</div>
+		
+		<div class="contentHead">
+			<h1>1. Timelistens gang</h1>
+		</div>
+		<div class="content">
+		<a name=loenn1>
+		
+		<p>
+			En timeliste blir opprettet etter at en vikar har fått et oppdrag og "Lag timeliste"-knappen er trykket.<br>
+			Timelisten har 3 statuser:
+		</p>
+		<ol>
+			<li>Timelistestatus (1 - 6)</li>
+			<li>Lønnsstatus (1 - 3)</li>
+			<li>Fakturastatus (1 - 3)</li>
+		</ol>
+
+		<h2>Timelistestatus</h2>
+		<p>
+			Alle statusene er 1 når timelisten er laget.<br>
+			Timelistestatusen går fra 1 til 6, fakturastatusen fra 1 til 3 og lønnsstatusen går fra 1 til 3.<br>
+			Når en vikar godkjenner timelisten over internett blir timeliste statusen 2<br>
+			Når en kunde godkjenner timelisten over internett blir timeliste statusen 3<br>
+			Når en personalkonsulent godkjenner timelisten blir statusen 4<br>
+			Når noen på lønn og regnskap godkjenner blir statusen 5<br>
+			Når den skal fjernes fra visning i timelistebildet blir den satt til 6.<br>
+		</p>
+		<ol>
+			<li>Nygenerert (RØD)</li>
+			<li>Godkjent av vikar (ORANGE)</li>
+			<li>Godkjent av kunde (LYS BLÅ)</li>
+			<li>Godkjent av personalkonsulent (GUL)</li>
+			<li>Godkjent av økonomi/lønn (GRØNN)</li>
+			<li>Godkjent av økonomi/lønn, fakturastatus = 3, lønnstatus = 3 (SVART)</li>
+			<li>Gammel (borte fra timelisten)</li>
+		</ul>
+		<p>Når en uke på timeliste godkjennes ("Godkjenn"-kanppen) av lønn og regnskap (tstatus = 5) skjer følgende hver gang:</p>
+		<ol>
+			<li>Et ukevist sammendrag (etter lønnsstaser og fakturasatser) legges i en ukeliste.</li>
+			<li>Et sammendrag av <strong>alle godkjente uker i ukelista</strong> legges i lønn. En linje for hver lønnsart og hver lønnssats.</li>
+			<li>Et sammendrag av <strong>alle godkjente uker i ukelista som skal på samme faktura</strong> legges i faktura.</li>
+		</ol>
+		<ul>
+			<li>Timeliste (Dagsliste)</li>
+			<ul>
+				<li>Ukeliste</li>
+				<ul>
+					<li>Lønn</li>
+					<li>Faktura</li>
+				</ul>
+			</ul>
+		</ul>
+		
+		<h2>Lønn- og fakturastatus</h2>
+		<p>
+			Når timelisten har t-status 5 kan kan lønnen sees og godkjennes.<br>
+			Når lønnen er godkjent blir lønnstatus 2. Det samme skjer med faktura.<br>
+			Lønn er da klar til overføring til Huldt &amp; Lillevik.<br>
+			Faktura er klar til overføring til Rubicon.
+		</p>
+		</div>
+
+		<div class="contentHead">
+			<h1>2. Overføring av lønn til Huldt &amp Lillevik</h1>
+		</div>
+		<div class="content">		
+		<a name=overforloenn></a>
+		<p><a href=#meny>meny</a></p>
+		<p>
+			Lønnen må godkjennes for å komme med på listen for overføring. Når lønnen godkjennes oppdateres lønnen, ukeliste og timeliste(dagsliste) med lønnsstatus 2.<br>
+			Når "Overføring til Huldt & Lillevik"-knappen trykkes lages en fil på området t:\lo\osl\<br>
+			Denne filen importeres inn i fra Huldt &amp; Lillevik i menyvalg: ????<br>
+			Før import må printeren (matriseskriveren) slås på.<br>
+			Under importen skrives det ut en rapport som viser om importen er vellykket.
+		</p>
+		<p>
+			<strong>OBS!</strong><br>
+			Det kommer feilmeldig når det er en vikar (lønnsmottager) som ikke er registrert i H&L fra før av.
+		</p>
+		
+		<h2>Hvis det er feilmelding på utskiften:</h2>
+		<ol>
+			<li>Gå til xtra og svar NEI (trykk NEI-knappen) for ikke godkjent overføring.</li>
+			<li>Nedgrader de vikarene som ikke er registrert fra før.</li>
+			<li>Generer fil på nytt.</li>
+			<li>Ikke overfør, men svar JA (trykk JA-knappen) for godkjent overføring. </li>
+			<li>Registrer de som ble nedgradert i Huldt &amp; Lillevik.</li>
+			<li>Godkjenn lønnen til de som du nedgraderte.</li>
+			<li>Generer fil på nytt.</li>
+			<li>Sjekk utskriften. (Hvis feilmelding gjenta fra punkt 1)</li>
+			<li>Svar Ja i xtra på at importen har gått bra (JA-kanppen).</li>
+		</ol>
+		<p>Når JA-kanppen trykkes oppdateres lønnen, ukeliste og timeliste med lønnstatus 3. Dessuten forsvinner alle overførte fra listen over de som er klare til overføring.</p>
+		<p>
+			<strong>Merk!</strong><br>
+			Hvis du ved en feiltagelse har trykket Ja-knappen selvom det var feilbeskjed på utskriften ved import til Huldt & Lillevik, fortvil ikke! Det er nemlig mulig å finne igjen de som ikke er overført (iflg. utskriften) ved å se på Gamle (knapp "Gamle" øverst), og velg nedgrader-linken.<br>
+			Det er kun mulig å nedgradere siste lønning herfra. Når de er nedgradert vises de igjen på listen over de som er klare for overføring.
+		</p>
+		</div>
+		<div class="contentHead">
+			<h1>3. Overføring av faktura til Rubicon</h1>
+		</div>
+		<div class="content">		
+		<a name=overforfakt></a>
+		
+		<p><a href=#meny>meny</a></p>
+		<p>
+			Ved godkjennelse av faktura blir fakturastatus satt til 2, og den kommer på listen over fakturaer som er klare til overføring. Knapp nederst "Overfør til Rubicon" lager en export-fil, som kan importeres i Rubicon. <br>
+			Du får et bilde av den fysiske filen på skjermen og øverst en Nei-knapp og en Ja-knapp.<br>
+			Filen blir liggende på katalog f:\avdeling\filnavn. (Er usikker på om tall i filnavnet følger Rubicon-klinent nr).<br>Det må sjekkes at import har gått bra før det trykkes på ja-knappen. <br>
+			Hvis importen ikke gikk bra, ligger filen der fortsatt hvis ikke Rubicon har endret navn på den. <br>
+			Hvis filen ikke finnes, kan den bare exporteres(lage fil) en gang til ved å trykke nei-knappen for å komme tilbake til listen over de fakturaene som er klare for overføring.
+		</p>	
+		<p>
+			<strong>OBS!</strong><br>
+			Hvis det er to fakturaer til samme firma må du finne siste ordrenummer i Rubicon før overføring og skrive dette inn i feltet ved siden av "Lag fil til Rubicon"-knappen, før den trykkes. Dette er for å unngå at fakturaene blir slått sammen.<br>
+			Når Ja-knappen trykkes etter at overføringen er iorden fjernes alle klargorte fra listen (blir gamle) og fakturastatus blir 3. for disse fakturaene.
+		</p>	
+		</div>
+		<div class="contentHead">
+			<h1>4. Administrasjon</h1>		
+		</div>
+		<div class="content">		
+		<a name=admin></a>
+		
+		<p><a href=#meny>meny</a></p>
+		<a name=admin1></a>
+		<h2>Endring av tildato</h2>
+		<p>Tildato er der for at ikke alle timelistene skal vises hvis det er en som har timeliste i feks ett år framover. Altså den begrenser visning av timeliser i tid. Den blir automatisk satt til den første i neste måned. <br>
+		Merk! Tildato kan også brukes til å se hva som er igjen av timelister fra forringe måned.</p>
+		
+		<a name=admin2></a>
+		<h2>Splitting av uke</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Splitting av uke brukes når den første i måneden faller på en ukedag og timelisten skal godkjennes kun til månedsskiftet. Ta Endre-linken på den 1. og hak av splitt og lagre.</p>
+		
+		<a name=admin3></a>
+		<h2>Splitting av faktura</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Splitting av faktura gjøres når en kunde skal ha faktura for hver vikar og det er flere vikarer på den genererte fakturaen. <br>Hak av splitt i fakturabildet og trykk godkjenn.</p>
+		
+		<a name=admin4></a>
+		<h2>Legge til lønnslinjer i variabel lønn</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Det er mulig å legg til nye linjer for variable lønn, feks kjøregodtgjørelse. Trykk Ny-knappen, velg lønnsart, skirv sats og antall. Lagre.</p>
+		
+		<a name=admin5></a>
+		<h2>Legge til fakturalinjer i fakturaen</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Det er mulig å legge til ekstra linje i fakturaen. Du kan bestemme hvor linjen skal være i forhold til andre fakturalinjer. Velg linken "settinn" over den linjen du skla sette in før. Over første linje setter inn først.</p>
+		
+		<a name=admin6></a>
+		<h2>Søk i gamle timelister</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Søk i gamle timlister får du tilgang til på Admin - lønn. Skriv inn fra-til dato og vikarnr.</p>
+		
+		<a name=admin7></a>
+		<h2>Fjerne gamle timelister fra timelistebildet</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Dette valget ligger på linken Administrasjon (Admin - lønn). Du ma ha admin-rettighet for å se linken.<br>
+		Dette betyr at gamle timelister (svarte) fjernes fra visningen av timelister. Det må angis til hvilken dato dette skal skje. Datoen avrudes til nærmeste mandag.</p>
+		
+		<a name=admin8></a>
+		<h2>Etterlønning og etterfaturering</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Dette valget ligger på linken Administrasjon (Admin - lønn). Du ma ha admin-rettighet for å se linken.<br>
+		Her er det mulig å legge inn en dag med lønn eller faktureringsgrunnlag for en vikar som ikke har timeliste. (Obs! Dette må prøves ut!).</p>
+		
+		<a name=admin9></a>
+		<h2>Omsetningsrapport</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Dette valget ligger på linken Administrasjon (Admin - lønn). Du ma ha admin-rettighet for å se linken.<br>
+		Omsetnings rapport viser ca. omsetning for en periode sortert på avdeling. Ved å hake av "Sammendrag" vil du kunne se omsetning pr vikar.</p>
+		
+		<a name=loenn2></a>
+		<h2>Overføring av personopplysninger til Huldt &amp Lillevik</h2>
+		<p><a href=#meny>meny</a></p>
+		<p>Her kommer mer senere!!</p>
+
+	</div>
+</div>
+</body>
+</html>

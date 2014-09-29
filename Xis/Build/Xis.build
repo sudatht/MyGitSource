@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<!-- 
+/***************************************************************************
+Copyright(c) 2000-2005 Eurocenter DDC.
+Level 5, No 65 Walukarama Road Colombo 3, Sri Lanka
+All rights reserved.
+	 
+This software is the confidential and proprietary information of Eurocenter DDC ("Confidential Information"). You shall not disclose such Confidential Information and shall use it only in accordance with the terms of the license agreement you entered into with Eurocenter.
+	 
+Project Name             : Xis
+Module Name              : 
+Language used            : XML
+Coding Standard          : EC Coding Standards
+Author                   : CMU
+Date Created             : 03/05/2006
+
+ 
+Description              : Xtra build script. builds all subprojects
+	 
+Code Reviews 
+Code Reviewed By         :
+Code Reviewed Date       :
+Recommendations          :
+***************************************************************************/
+-->
+
+<project name="Xtra" default="Deploy.Xis">
+    	<property name="debug" value="true"/>
+    	
+	<property name="xis.rootsourcedir" value="../Src"/>
+	<property name="xis.libdir" value="../Lib"/>
+	<property name="xis.componentsourcedir" value="../Src/Components"/>
+	<property name="xis.componentdir" value="Components"/>
+	<property name="xis.exedir" value="Exe"/>
+	<property name="xtra.componentdeploydirbase" value="c:/Windows/System32/inetsrv"/>
+	<property name="xtra.componentdeploydir" value="${xtra.componentdeploydirbase}/Components"/>
+	<property name="xtra.webdeploydir" value="c:/W3Server"/>
+	
+	<echo message="Xis component directory is = ${xis.componentsourcedir}" />
+
+
+    <target name="Clean">
+    	<call target="ComUnreg" />
+    	<delete>
+    		<fileset>
+    			<include name="${xis.componentdir}/*.dll" />
+    			<include name="${xis.componentdir}/*.exe" />
+    		</fileset>
+    	</delete>
+    </target>
+
+    <target name="ComUnreg">
+    	<comregister unregister="true" verbose="true">
+    		<fileset>
+    			<include name="${xis.componentdir}/*.dll" />
+    		</fileset>
+    	</comregister>
+    </target>
+    
+    <target name="Build.Components">
+        <vb6 project="${xis.componentsourcedir}/SOIntegration/Integration/Integration.vbp" outdir="${xis.componentdir}" verbose="true" /> 
+    	<vb6 project="${xis.componentsourcedir}/XisSystem/XisSystem/XisSystem.vbp" outdir="${xis.componentdir}" verbose="true" />
+	<vb6 project="${xis.componentsourcedir}/XisUtils/XisUtils.vbp" outdir="${xis.componentdir}" verbose="true" />
+	<vb6 project="${xis.componentsourcedir}/Localizer/Localizer.vbp" outdir="${xis.componentdir}" verbose="true" />
+    	<vb6 project="${xis.componentsourcedir}/Xtraweb/DataAccessLayer/DataAccess/DataAccess.vbp" outdir="${xis.componentdir}" verbose="true" />
+    	<vb6 project="${xis.componentsourcedir}/Xtraweb/LogOn/LogOn/LogOn.vbp" outdir="${xis.componentdir}" verbose="true" />
+    	<vb6 project="${xis.componentsourcedir}/Xtraweb/XtraWeb/XtraWeb.vbp" outdir="${xis.componentdir}" verbose="true" />
+    	<delete>
+    		<fileset>
+    			<include name="${xis.componentdir}/*.exp" />
+    			<include name="${xis.componentdir}/*.lib" />
+    		</fileset>    		
+    	</delete>
+    </target>
+    
+    
+    <target name="Build.All">
+    	<call target="Clean"/>
+    	<call target="Build.Components"/>
+    </target>
+
+    <target name="Deploy.Xis" depends="Clean.Xis, Build.All">
+		
+		<mkdir dir="${xtra.componentdeploydirbase}/Components" />
+		<mkdir dir="${xtra.componentdeploydir}/Xtra" />
+		<mkdir dir="${xtra.webdeploydir}/Xis/www" />
+		
+		<copy todir="${xtra.componentdeploydir}/Xtra">
+			<fileset basedir="Components">
+				<include name="DataAccess.dll"/>
+				<include name="LogOn.dll"/>
+				<include name="XtraWeb.dll" />
+				<include name="Localizer.dll" />
+			</fileset>
+		</copy>	
+		<copy todir="${xtra.componentdeploydir}">
+			<fileset basedir="Components">
+				<include name="XisSystem.dll"/>
+				<include name="Integration2.dll"/>
+				<include name="XisUtils.dll"/>
+			</fileset>
+		</copy>
+		<copy todir="${xtra.componentdeploydir}">
+			<fileset basedir="../Lib/EF">
+				<include name="EfCommon.dll"/>
+			</fileset>
+		</copy>				
+		
+		<copy todir="${xtra.webdeploydir}/Xis/www">
+			<fileset basedir="../Src/Web/Xis">
+				<exclude name="aspnet_client/**.*" />
+				<include name="**.*"/>
+			</fileset>
+		</copy>
+    	<comregister unregister="false" verbose="true">
+    		<fileset>
+    			<include name="${xtra.componentdeploydir}/*.dll" />
+    		</fileset>
+    	</comregister>
+    	
+    	<exec program="cscript" commandline=" XisComPlus.vbs /mode:i /path:&quot;${xtra.componentdeploydir}&quot;" />
+    	
+		<mkdir dir="${xtra.webdeploydir}/Xis/www/Xtra/Reports" />
+		<copy todir="${xtra.webdeploydir}/Xis/www/Xtra/Reports">
+			<fileset basedir="../../XisNet/Build/XisNET">
+				<include name="**.*"/>
+			</fileset>
+		</copy>
+
+		<mkdir dir="${xtra.webdeploydir}/Xis/www/Xtra/WebUI" />
+		<copy todir="${xtra.webdeploydir}/Xis/www/Xtra/WebUI">
+			<fileset basedir="../../XisNet/Build/WebUI">
+				<include name="**.*"/>
+			</fileset>
+		</copy>
+
+    	<servicecontroller action="Start" service="w3svc" />
+	</target>
+	
+	<target name="Clean.Xis">
+		<servicecontroller action="Stop" service="w3svc" />
+		<exec program="cscript" commandline=" XisComPlus.vbs /mode:u" />
+    	<comregister unregister="true" verbose="true">
+    		<fileset>
+    			<include name="${xtra.componentdeploydir}/Xtra/*.dll" />
+    			<include name="${xtra.componentdeploydir}/*.dll" />
+    		</fileset>
+    	</comregister>
+    	<delete>
+    		<fileset>
+    			<include name="${xtra.componentdeploydir}/Xtra/*.dll" />
+    			<include name="${xtra.componentdeploydir}/*.dll" />
+    			<include name="${xtra.webdeploydir}/Xis/**.*" />
+     		</fileset>    	
+    	</delete>    		
+	</target>
+
+</project>

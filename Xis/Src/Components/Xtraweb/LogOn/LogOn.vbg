@@ -1,0 +1,3 @@
+VBGROUP 5.0
+Project=LogOn\LogOn.vbp
+StartupProject=Test\logon_driver.vbp

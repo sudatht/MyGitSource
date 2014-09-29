@@ -1,0 +1,4 @@
+<%
+	Const XIS_WORKHOURS_PER_WEEK = 37.5
+	Const XIS_FACTOR = 1.29
+%>

@@ -1,0 +1,3 @@
+VBGROUP 5.0
+StartupProject=DataAccess\DataAccess.vbp
+Project=TestDAL\TestDAL.vbp

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+    "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<link rel="stylesheet" href="/xtra/css/main.css" type="text/css" title="xtra intranett stylesheet">
+<link rel="stylesheet" href="/xtra/css/print.css" type="text/css" title="xtra intranett stylesheet" media="print">
+</head>
+<body>
+	<div class="pageContainer" id="pageContainer">
+
+<h1>Timelister på avdelingskontor</h1>
+<p>Det hentes inn vikar på vanlig måte. Det kan hentes inn flere vikarer (samme vikar flere ganger) på oppdraget.</p>
+<p>	
+	Når "Lag timeliste"-knappen trykkes skjer følgende:<br>
+	I oslo kjøres oppdragdb.asp, men på avdelingskontor (session("hvorerjegNr") > 0) så kjøres Timeliste_mellom.asp.</p>
+<p>
+	<strong>I Timeliste_mellom:</strong><br>
+	Id-ene til de linjene i oppdrag_vikar som er koblet til oppdraget (som det ikke er kjørt timelister for før)lagres i session("idListe"). Så hentes alle opplysningene som trengs for å lage timeliste for den første linjen ut. Alle parameterene sammles i en variabel: timelisteparametere. Så redirektes det til Oslo og skriptet Timeliste_mellom_oslo kjøres i oslo.</p>
+<p>En av parameterne er avdkontor, og dette sikrer at skriptet i oslo kjører mot den rette databasen fordi dette fanges opp av global.asa. En annen parameter er backURL som Timeliste-mellom_oslo bruker for å redirecte tilbake til 	avdelingskontoret. Timelisten blir laget i oslo. (Linjen i Oppdrag_vikar blir ikke laget, den blir replikert neste natt.) Det redirektes tilbake til avdelingskontor og Timeliste_mellom kalles igjen.</p>
+<p>Denne gangen kalles Timeliste_mellom med økende teller (frakode=2) som setter i gang andre deler av scriptet. Det er ikke nødvendig å hente ut linjene i Oppdrag_vikar en gang til fordi vi har lagret listen i session("idListe"). Men vi trenger å oppdatere Timeliste-kolonnen i Oppdrag_vikar-linjen, som det ble laget timeliste for i oslo. Deretter hentes variablene for neste linje ut. Så redirectes det til oslo (Timeliste_mellom_oslo). Dette pågår til det er laget timelister for alle linjene i oppdrag_vikar for dette oppdraget. Siste gangen vi kommer fra oslo redirectes det til Oppdragvis.asp.</p>
+
+<hr>
+
+<h2>Sletting av timelister.</h2>
+<p>Dette gjøres nå fra Oppdragvikarvis.asp (Knappen "Slette(også timelisten)")</p>
+<p>I oslo slettes da timelisten for denne vikaren (etter datoene som står i oppdragvikarvis.asp), og dessuten slettes linjen for denne vikaren i OPPDRAG_VIKAR (sript: Oppdragvikar_slett_timeliste.asp).</p>
+<p>På avdelngskontor må det redirectes til oslo for å slette timelisten. Derfor blir det samme skriptet kalt i oslo.</p>
+
+<h3>I Oppdragvikar_slett_timeliste.asp:</h3>
+<p>Det sjekkes først om dette er avdelingskontor (session("hvorerjegNR")). Hvis det er avdelingskontor så må det settes variabler i redirektstrengen til Oslo. Dette er feks URL for avdelingskontor (står nå i globla.asa) og alle andre parametere som skal brukes i skriptet. Så redirektes det til oslo og samme skript kjøres der.</p>
+<p>Det hoppes over første delen fordi session("hvorerjenNR") nå er 0 (oslo). Det sjekkes først om økonomi har tuklet med timelistene slik at lønns- eller faktsatauser er høyere enn 1. Hvis ikke slettes timelisten.</p>
+<p>En variabel frakode økes med 1. Dette er for å styre kjøring av resten av skriptet og fordele kjøring på Oslo og avdelingskontor. Når det bare kjøres i oslo er den i utgangspunktet satt til 0. Kommer vi fra avdelingskontor er den 1. Så slettes oppdragvikarlinje (hvis den finnes) i oslo. Frakode økes med 1. Kjørt fra oslo er den nå 2, fra avdelingskontor er den nå 3. Derfor kan vi redirekte til avdelingskontor når frakode = 3.</p>
+<p>På avdlingskontoret kjøres skriptet for annen gang og da slår bare delen som sletter linje i oppdrag_vikar inn. (frakode > 0) Frakode økes med 1 og blir 4. Da slår ikke redirect-delen til avdelingskontor inn, og vi går pent tilbake til oppdragsbildet. Skriptet har altså blitt kjørt 3 ganger: 1 gang på avdelingskontor, 1 gang i oslo og 1 gang på avdelingskontor. Når skriptet kjøres bare fra oslo går det kun 1 gang. (frakode slutter på 2).</p>
+
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+	

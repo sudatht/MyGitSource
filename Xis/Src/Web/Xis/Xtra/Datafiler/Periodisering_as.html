@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta http-equiv="Content-Style-Type" content="text/css">
+		<meta http-equiv="Content-Script-Type" content="text/javascript">
+		<meta name="Developer" content="Electric Farm ASA">
+		<script language="javaScript" src="../js/javaScript.js"></script>
+		<link rel="stylesheet" href="/xtra/css/main.css" type="text/css" title="xtra intranett stylesheet">
+			<link rel="stylesheet" href="/xtra/css/print.css" type="text/css" title="xtra intranett stylesheet" media="print">
+				<title>Periodisering for AS</title>
+	</head>
+	<body onload="document.all.tildato.focus()">
+		<div class="pageContainer" id="Div1">
+			<div class="contentHead1">
+				<H1>Periodisering for AS</H1>
+			</div>
+			<div class="content">
+				<FORM name="dato" ACTION="Periodisering_as.asp">
+					Til dato:&nbsp;<INPUT SIZE="6" NAME="tildato" id="tildato" ONBLUR="dateCheck(this.form, this.name)">&nbsp; 
+					Ikke lønnet:<INPUT class="CHECKBOX" id="checkbox1" name="ikke_loennet" type="checkbox" CHECKED>&nbsp; 
+					Ikke fakturert: <INPUT id="checkbox2" class="CHECKBOX" name="ikke_fakt" style="LEFT: 364px; TOP: 57px" type="checkbox" CHECKED>&nbsp;
+					<INPUT TYPE="submit" VALUE="  Hent  ">
+				</FORM>
+			</div>
+		</div>
+	</body>
+</html>
